@@ -7,7 +7,7 @@ Office entrance kiosk that loops promo videos fullscreen and greets registered p
 From this repository on the demo laptop:
 
 ```powershell
-python run.py
+.\.venv-smoke-dlib-corrected\Scripts\python.exe run.py
 ```
 
 This starts the full local system: fullscreen muted promo player, face recognition worker, Telegram bot, and the local web admin at `http://127.0.0.1:8000/`.
@@ -25,13 +25,13 @@ Useful commands:
 
 ```powershell
 # Show recent component logs
-python run.py --tail-logs
+.\.venv-smoke-dlib-corrected\Scripts\python.exe run.py --tail-logs
 
 # Run the full regression suite
-python -m pytest -q
+.\.venv-smoke-dlib-corrected\Scripts\python.exe -m pytest -q
 
 # Run only the web admin
-python webapp.py
+.\.venv-smoke-dlib-corrected\Scripts\python.exe webapp.py
 ```
 
 ## Setup

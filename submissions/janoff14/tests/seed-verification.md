@@ -7,7 +7,7 @@ Last updated: 2026-05-15
 Command run:
 
 ```powershell
-python seed_people.py --source-dir faces --expected-count 5
+.\.venv-smoke-dlib-corrected\Scripts\python.exe seed_people.py --source-dir faces --expected-count 5
 ```
 
 Result:

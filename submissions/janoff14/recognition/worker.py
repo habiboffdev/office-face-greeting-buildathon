@@ -44,6 +44,8 @@ DEFAULT_COOLDOWN_SECONDS = 60.0
 DEBUG_FRAME_INTERVAL_S = 0.2
 DEBUG_FRAME_WIDTH = 320
 CAMERA_REOPEN_AFTER_EMPTY_FRAMES = 120
+CAMERA_OPEN_MAX_ATTEMPTS = 20
+CAMERA_OPEN_BACKOFF_S = 0.5
 
 
 def _camera_backend_flag(config: dict) -> int | None:
@@ -69,6 +71,44 @@ def _open_camera(camera_index: int, config: dict):
     except Exception:
         pass
     return cap
+
+
+def _open_camera_with_retry(
+    camera_index: int,
+    config: dict,
+    stop_event=None,
+    max_attempts: int = CAMERA_OPEN_MAX_ATTEMPTS,
+    backoff_seconds: float = CAMERA_OPEN_BACKOFF_S,
+):
+    """Open the camera, retrying briefly if the device is still busy.
+
+    A previous worker run that died abruptly may have left the USB camera
+    held by the OS for a moment. Retrying with backoff gives Windows time
+    to free the handle without the user having to unplug the camera.
+    """
+    last_cap = None
+    for attempt in range(1, max_attempts + 1):
+        if stop_event is not None and stop_event.is_set():
+            if last_cap is not None:
+                last_cap.release()
+            return None
+        cap = _open_camera(camera_index, config)
+        if cap.isOpened():
+            if attempt > 1:
+                print(
+                    f"CAMERA_OPENED on attempt {attempt} after retries",
+                    flush=True,
+                )
+            return cap
+        cap.release()
+        last_cap = None
+        print(
+            f"CAMERA_BUSY attempt {attempt}/{max_attempts}; retrying in {backoff_seconds:.1f}s",
+            file=sys.stderr,
+            flush=True,
+        )
+        time.sleep(backoff_seconds)
+    return None
 
 
 def _read_latest_frame(cap) -> Optional[np.ndarray]:
@@ -209,10 +249,15 @@ def run(
     people_db_path = Path(config.get("people_db_path", "people.json"))
     parent_process = multiprocessing.parent_process()
 
-    cap = _open_camera(camera_index, config)
-    if not cap.isOpened():
-        print(f"ERROR: cannot open camera index {camera_index}", file=sys.stderr)
-        cap.release()
+    cap = _open_camera_with_retry(camera_index, config, stop_event=stop_event)
+    if cap is None or not cap.isOpened():
+        print(
+            f"ERROR: cannot open camera index {camera_index} after "
+            f"{CAMERA_OPEN_MAX_ATTEMPTS} attempts (device still busy?)",
+            file=sys.stderr,
+        )
+        if cap is not None:
+            cap.release()
         return 1
 
     registry = load_registry(people_db_path)
@@ -254,7 +299,10 @@ def run(
                     print("CAMERA_REOPEN after repeated empty frames", file=sys.stderr, flush=True)
                     cap.release()
                     time.sleep(0.25)
-                    cap = _open_camera(camera_index, config)
+                    reopened = _open_camera_with_retry(
+                        camera_index, config, stop_event=stop_event
+                    )
+                    cap = reopened if reopened is not None else _open_camera(camera_index, config)
                     empty_frame_count = 0
                 time.sleep(LOOP_SLEEP_ON_EMPTY_S)
                 continue

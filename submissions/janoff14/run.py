@@ -4,12 +4,30 @@ from __future__ import annotations
 
 import argparse
 import multiprocessing
+import signal
 import sys
 import time
 from pathlib import Path
 from typing import Any
 
 import yaml
+
+
+def _suppress_sigint() -> None:
+    """Ignore further Ctrl+C so the shutdown path can finish in peace.
+
+    On Windows a second Ctrl+C while ``Process.join`` is blocked in
+    ``WaitForSingleObject`` interrupts the join with a KeyboardInterrupt
+    that propagates out of the ``finally`` block, leaving a noisy
+    traceback. Once we've already decided to shut down, ignore SIGINT
+    so the user can mash Ctrl+C without disrupting cleanup. The Job
+    Object guarantees children die anyway if anything stalls.
+    """
+    try:
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+    except (ValueError, OSError):
+        # signal handlers can only be set on the main thread.
+        pass
 
 from supervisor import (
     COMPONENT_LOGS,
@@ -95,7 +113,14 @@ def main(argv: list[str] | None = None) -> int:
         append_supervisor_log(log_dir, "KeyboardInterrupt received; shutting down")
         exit_code = 130
     finally:
-        component_supervisor.stop()
+        _suppress_sigint()
+        try:
+            component_supervisor.stop()
+        except KeyboardInterrupt:
+            # Belt-and-braces: if a SIGINT slipped through before
+            # _suppress_sigint took effect, swallow it so we still try
+            # the rest of the cleanup.
+            pass
         _close_queue(greeting_queue)
         _close_queue(debug_camera_queue)
     return exit_code
