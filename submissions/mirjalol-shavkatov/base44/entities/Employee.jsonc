@@ -1,0 +1,51 @@
+{
+  "name": "Employee",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string",
+      "description": "ID of the company this employee belongs to"
+    },
+    "name": {
+      "type": "string",
+      "description": "Full name of the employee"
+    },
+    "position": {
+      "type": "string",
+      "description": "Job position / title"
+    },
+    "department": {
+      "type": "string",
+      "description": "Department name"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "URL of the employee's face photo"
+    },
+    "face_descriptor": {
+      "type": "array",
+      "description": "128-point face descriptor vector for recognition",
+      "items": {
+        "type": "number"
+      }
+    },
+    "greeting_message": {
+      "type": "string",
+      "description": "Custom greeting message (optional)"
+    },
+    "birth_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Employee's date of birth (for birthday detection)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this employee is active in the system"
+    }
+  },
+  "required": [
+    "name",
+    "photo_url"
+  ]
+}

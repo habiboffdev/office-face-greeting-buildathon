@@ -1,0 +1,53 @@
+{
+  "name": "Video",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string",
+      "description": "ID of the company this video belongs to"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title of the video"
+    },
+    "video_url": {
+      "type": "string",
+      "description": "URL of the video file"
+    },
+    "order": {
+      "type": "number",
+      "description": "Playback order in the playlist"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this video is in the active playlist"
+    },
+    "duration_seconds": {
+      "type": "number",
+      "description": "Duration of the video in seconds"
+    }
+  },
+  "required": [
+    "title",
+    "video_url"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

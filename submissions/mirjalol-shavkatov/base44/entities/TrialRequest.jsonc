@@ -1,0 +1,48 @@
+{
+  "name": "TrialRequest",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user requesting access"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Full name of the requester"
+    },
+    "message": {
+      "type": "string",
+      "description": "Optional message from the user"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "denied"
+      ],
+      "default": "pending",
+      "description": "Status of the request"
+    },
+    "requested_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the request was submitted (for 1/day limit)"
+    }
+  },
+  "required": [
+    "user_email",
+    "user_name",
+    "requested_date"
+  ],
+  "rls": {
+    "create": {},
+    "read": {},
+    "update": {},
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
