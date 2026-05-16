@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="dashboard" aria-label="Kiosk status">
+  <div class="metric">
+    <span class="metric-label">People</span>
+    <strong>{{ stats.people }}</strong>
+  </div>
+  <div class="metric">
+    <span class="metric-label">Videos</span>
+    <strong>{{ stats.videos }}</strong>
+  </div>
+  <div class="metric">
+    <span class="metric-label">Camera</span>
+    <strong>#{{ stats.camera }}</strong>
+  </div>
+  <div class="metric">
+    <span class="metric-label">Web Login</span>
+    <strong>{% if stats.auth %}On{% else %}Off{% endif %}</strong>
+  </div>
+</section>
+
+<div class="grid">
+  <section class="card" id="people-card">
+    <div class="card-head">
+      <div>
+        <h2>People</h2>
+        <p>Registered faces and greeting settings.</p>
+      </div>
+      <span class="count">{{ people | length }}</span>
+    </div>
+
+    {% if people %}
+      <ul class="list">
+        {% for person in people %}
+          <li>
+            {% if person.has_photo %}
+              <img class="face" src="{{ url_for('face_photo', safe_name=person.safe) }}" alt="">
+            {% else %}
+              <div class="placeholder">{{ person.initial }}</div>
+            {% endif %}
+
+            <div class="person-body">
+              <div class="person-title">
+                <span class="name">{{ person.name }}</span>
+                <span class="meta">{{ person.language|upper }}{% if person.birthday %} - {{ person.birthday }}{% endif %}</span>
+              </div>
+              {% if person.custom_message %}
+                <div class="person-meta">{{ person.custom_message }}</div>
+              {% endif %}
+
+              <details class="metadata-editor">
+                <summary>Edit greeting</summary>
+                <form class="stack" method="post" action="{{ url_for('update_person_route') }}">
+                  <input type="hidden" name="name" value="{{ person.name }}">
+                  <div class="row">
+                    <div class="field">
+                      <label>Language</label>
+                      <select name="language">
+                        <option value="en" {% if person.language == 'en' %}selected{% endif %}>English</option>
+                        <option value="uz" {% if person.language == 'uz' %}selected{% endif %}>Uzbek</option>
+                        <option value="ru" {% if person.language == 'ru' %}selected{% endif %}>Russian</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label>Birthday (MM-DD)</label>
+                      <input type="text" name="birthday" value="{{ person.birthday }}" placeholder="05-16">
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Custom greeting</label>
+                    <input type="text" name="custom_message" value="{{ person.custom_message }}" placeholder="Welcome back.">
+                  </div>
+                  <div class="field">
+                    <label>Rotating flavor lines</label>
+                    <textarea name="flavor" rows="3" placeholder="One line per row">{{ person.flavor }}</textarea>
+                  </div>
+                  <button type="submit" class="primary">Save changes</button>
+                </form>
+              </details>
+            </div>
+
+            <form class="inline" method="post" action="{{ url_for('delete_person') }}"
+                  onsubmit="return confirm('Remove {{ person.name }}?');">
+              <input type="hidden" name="name" value="{{ person.name }}">
+              <button type="submit" class="danger">Delete</button>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="empty">
+        <strong>No people registered yet.</strong>
+        <span>Add a photo or capture from the local camera.</span>
+      </div>
+    {% endif %}
+
+    <form class="add action-panel" method="post" action="{{ url_for('add_person_route') }}"
+          enctype="multipart/form-data">
+      <div class="form-title">Add from photo</div>
+      <div class="row">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="file" name="photo" accept="image/*" required>
+      </div>
+      <div class="row">
+        <select name="language">
+          <option value="en">English</option>
+          <option value="uz">Uzbek</option>
+          <option value="ru">Russian</option>
+        </select>
+        <input type="text" name="birthday" placeholder="Birthday MM-DD">
+      </div>
+      <input type="text" name="custom_message" placeholder="Custom greeting message">
+      <textarea name="flavor" rows="3" placeholder="Optional rotating flavor lines, one per line"></textarea>
+      <button type="submit" class="primary">Add person</button>
+    </form>
+
+    <form class="add action-panel" method="post" action="{{ url_for('capture_person_route') }}">
+      <div class="form-title">Capture from camera</div>
+      <div class="row">
+        <input type="text" name="name" placeholder="Name" required>
+        <select name="language">
+          <option value="en">English</option>
+          <option value="uz">Uzbek</option>
+          <option value="ru">Russian</option>
+        </select>
+      </div>
+      <div class="row">
+        <input type="text" name="birthday" placeholder="Birthday MM-DD">
+        <input type="text" name="custom_message" placeholder="Custom greeting message">
+      </div>
+      <textarea name="flavor" rows="3" placeholder="Optional rotating flavor lines, one per line"></textarea>
+      <button type="submit" class="primary">Capture photo</button>
+    </form>
+  </section>
+
+  <section class="card" id="videos-card">
+    <div class="card-head">
+      <div>
+        <h2>Videos</h2>
+        <p>Muted promo files played fullscreen in a continuous loop.</p>
+      </div>
+      <span class="count">{{ videos | length }}</span>
+    </div>
+
+    {% if videos %}
+      <ul class="list">
+        {% for video in videos %}
+          <li>
+            <div class="video-icon">MP4</div>
+            <div class="filename" title="{{ video.name }}"><strong>{{ video.name }}</strong></div>
+            <form class="inline" method="post" action="{{ url_for('delete_video_route') }}"
+                  onsubmit="return confirm('Remove {{ video.name }}?');">
+              <input type="hidden" name="filename" value="{{ video.name }}">
+              <button type="submit" class="danger">Delete</button>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="empty">
+        <strong>No videos in playlist.</strong>
+        <span>Upload an MP4, MOV, or WEBM file for the kiosk loop.</span>
+      </div>
+    {% endif %}
+
+    <form class="add action-panel" method="post" action="{{ url_for('add_video_route') }}"
+          enctype="multipart/form-data">
+      <div class="form-title">Upload to playlist</div>
+      <input type="file" name="video" accept="video/mp4,video/quicktime,video/webm" required>
+      <button type="submit" class="primary">Upload video</button>
+    </form>
+  </section>
+</div>
+{% endblock %}
