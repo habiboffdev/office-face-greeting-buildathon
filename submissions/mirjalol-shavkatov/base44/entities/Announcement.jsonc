@@ -1,0 +1,60 @@
+{
+  "name": "Announcement",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string",
+      "description": "ID of the company this announcement belongs to"
+    },
+    "title": {
+      "type": "string",
+      "description": "Announcement headline"
+    },
+    "body": {
+      "type": "string",
+      "description": "Full announcement text"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this announcement is currently displayed"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional expiry date/time after which the announcement is hidden"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "normal",
+        "urgent"
+      ],
+      "default": "normal",
+      "description": "Urgency level for visual styling"
+    }
+  },
+  "required": [
+    "title",
+    "body"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

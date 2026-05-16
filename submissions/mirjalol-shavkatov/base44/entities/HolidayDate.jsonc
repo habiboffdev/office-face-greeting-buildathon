@@ -1,0 +1,46 @@
+{
+  "name": "HolidayDate",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string",
+      "description": "ID of the company (null = global/shared holidays)"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Holiday date"
+    },
+    "name": {
+      "type": "string",
+      "description": "Holiday name"
+    },
+    "is_custom": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a custom holiday added by admin"
+    }
+  },
+  "required": [
+    "date",
+    "name"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

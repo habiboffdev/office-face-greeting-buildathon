@@ -1,0 +1,49 @@
+{
+  "name": "RecognitionLog",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string",
+      "description": "ID of the company"
+    },
+    "employee_id": {
+      "type": "string",
+      "description": "ID of the recognized employee"
+    },
+    "employee_name": {
+      "type": "string",
+      "description": "Name of the employee (denormalized for fast queries)"
+    },
+    "department": {
+      "type": "string",
+      "description": "Department of the employee (denormalized)"
+    },
+    "is_birthday": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this was a birthday greeting"
+    }
+  },
+  "required": [
+    "employee_id",
+    "employee_name"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

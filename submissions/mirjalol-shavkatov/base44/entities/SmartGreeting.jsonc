@@ -1,0 +1,55 @@
+{
+  "name": "SmartGreeting",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string",
+      "description": "ID of the company"
+    },
+    "employee_id": {
+      "type": "string",
+      "description": "ID of the employee"
+    },
+    "greeting_text": {
+      "type": "string",
+      "description": "Generated personalized greeting"
+    },
+    "greeting_type": {
+      "type": "string",
+      "enum": [
+        "welcome",
+        "long_time_no_see",
+        "frequent_visitor",
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "description": "Type of greeting generated"
+    },
+    "generated_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when this greeting was generated"
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this greeting expires (next day midnight)"
+    }
+  },
+  "required": [
+    "employee_id",
+    "greeting_text",
+    "greeting_type"
+  ],
+  "rls": {
+    "create": {},
+    "read": {},
+    "update": {},
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

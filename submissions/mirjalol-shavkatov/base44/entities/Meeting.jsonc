@@ -1,0 +1,56 @@
+{
+  "name": "Meeting",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string",
+      "description": "ID of the company"
+    },
+    "title": {
+      "type": "string",
+      "description": "Meeting title"
+    },
+    "employee_id": {
+      "type": "string",
+      "description": "ID of the employee this meeting belongs to"
+    },
+    "start_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Meeting start date/time"
+    },
+    "end_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Meeting end date/time"
+    },
+    "location": {
+      "type": "string",
+      "description": "Room or location of the meeting"
+    }
+  },
+  "required": [
+    "title",
+    "employee_id",
+    "start_time",
+    "end_time"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
