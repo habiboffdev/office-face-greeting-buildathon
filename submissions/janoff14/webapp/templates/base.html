@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FaceTag Admin</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="{% block body_class %}app-shell{% endblock %}">
+  {% block layout %}
+  <header class="top">
+    <div class="brand">
+      <div class="brand-mark">FT</div>
+      <div>
+        <h1>FaceTag</h1>
+        <p class="subtitle">Local kiosk admin</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span class="status-pill">127.0.0.1:8000</span>
+      {% if session.get("web_authenticated") %}
+        <form method="post" action="{{ url_for('logout') }}">
+          <button type="submit">Log out</button>
+        </form>
+      {% endif %}
+    </div>
+  </header>
+
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="bottom">
+    Local-only admin panel. Do not expose this port on a public network.
+  </footer>
+  {% endblock %}
+</body>
+</html>

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block body_class %}auth-shell{% endblock %}
+
+{% block layout %}
+<main class="auth-wrap">
+  <section class="card auth-card">
+    <div class="auth-head">
+      <div class="brand-mark large">FT</div>
+      <div>
+        <h1>FaceTag Admin</h1>
+        <p>Sign in to manage people and promo videos.</p>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form class="add auth-form" method="post">
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" type="text" name="username" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="primary">Log in</button>
+    </form>
+  </section>
+</main>
+{% endblock %}

@@ -1,0 +1,49 @@
+# Copy this file to config.yaml and fill in local values.
+# config.yaml is intentionally ignored by git.
+
+telegram_token: "PASTE_BOT_TOKEN_HERE"
+admin_chat_ids: []
+
+camera_device_index: 0
+# Windows demo default: DirectShow is usually more reliable than MSMF.
+camera_backend: "dshow"
+
+recognition_tolerance: 0.5
+cooldown_seconds: 60
+
+display_duration_seconds: 5
+font_size_factor: 0.08
+
+video_folder: "videos"
+faces_folder: "faces"
+log_directory: "logs"
+people_db_path: "people.json"
+pending_submissions_folder: "pending_submissions"
+
+# Optional time-based playlist folders. First matching window wins.
+# Windows can cross midnight, for example 18:00 -> 08:00.
+playlist_schedule: []
+# Example:
+# playlist_schedule:
+#   - start: "08:00"
+#     end: "12:00"
+#     folder: "videos/morning"
+#   - start: "12:00"
+#     end: "18:00"
+#     folder: "videos/day"
+
+# Optional local web admin login. Leave blank to keep localhost-only access without a password.
+# Preferred: set one or more admin emails plus a shared local password.
+web_allowed_emails: []
+web_username: ""
+web_password: ""
+
+# Camera preview panel on the kiosk. Useful for demo; set false for unattended installs.
+debug_camera_overlay: true
+
+# Optional: holiday → headline map. Date keys are MM-DD (no year). Empty by default.
+# Example:
+#   holidays:
+#     "03-21": "Navruz mubarak"
+#     "01-01": "Happy New Year"
+holidays: {}

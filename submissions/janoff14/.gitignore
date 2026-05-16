@@ -1,0 +1,39 @@
+# Secrets and local configuration (project root only — do NOT match
+# nested config.yaml inside _bmad/, which is shared module config)
+/config.yaml
+/.env
+
+# Python caches and virtual environments
+__pycache__/
+*.py[cod]
+.venv*/
+venv/
+
+# Runtime data
+/people.json
+logs/*
+!logs/.gitkeep
+faces/*
+!faces/.gitkeep
+/tests/fixtures/
+
+# Promo playlist files are local runtime media.
+videos/*
+!videos/.gitkeep
+
+# Local source media staging folders
+promos/
+
+# Local working artifacts
+/.agents/
+/.claude/
+
+# BMad: track shared runtime + outputs, ignore personal config
+/_bmad/config.user.toml
+/_bmad/custom/config.user.toml
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
